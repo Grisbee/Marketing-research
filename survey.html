@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What makes you buy bubble tea? – Group 5 survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --film:#F2F4EE;   /* page: pale sealing-film green */
+  --cup:#FFFFFF;
+  --leaf:#2F5D3A;   /* oolong leaf */
+  --amber:#C98B2B;  /* black tea */
+  --pearl:#2A1F1A;  /* tapioca: text and selections */
+  --muted:#5F6457;
+  --rule:#D5DBCC;
+  --err:#B42318;
+  --font:"Bricolage Grotesque","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--film);color:var(--pearl);font:400 17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2{margin:0;font-weight:700;letter-spacing:-.015em}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+.small{font-size:14px;color:var(--muted)}
+
+/* progress bar under the section title */
+.sec-head.with-bar{border-bottom:0}
+.progress{height:8px;overflow:hidden;border-radius:4px;background:var(--rule)}
+.progress-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .6s cubic-bezier(.3,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.progress-fill{transition:none}}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto;padding:14px 20px 0}
+.tb-title{font-size:15px;font-weight:500}
+.modes{display:flex;gap:2px;padding:3px;border:1px solid var(--rule);border-radius:999px;background:var(--cup)}
+.mode{border:0;background:none;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--pearl);color:#fff}
+
+/* welcome */
+.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:center;padding:36px 0 40px}
+.hero h1{font-size:clamp(42px,7.5vw,68px);line-height:.98;letter-spacing:-.035em;font-variation-settings:"opsz" 96}
+.lead{font-size:19px;line-height:1.5;max-width:32em;margin:20px 0}
+.facts{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:6px}
+.facts li{position:relative;padding-left:24px}
+.facts li::before{content:"";position:absolute;left:2px;top:.45em;width:11px;height:11px;border-radius:50%;background:var(--pearl)}
+.cup-hero{display:block;width:100%;max-width:250px;margin:0 auto}
+@media(max-width:640px){.hero{grid-template-columns:1fr;gap:12px;padding-top:20px}.hero-cup{order:-1}.cup-hero{max-width:130px;margin:0}}
+.staff{padding:32px 20px 48px}
+.staff p{margin:12px 0}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px}
+.langs{display:inline-flex}
+.zh-sub{margin:12px 0 0;font-size:clamp(24px,4.2vw,34px);font-weight:500;color:var(--muted)}
+.zh-line{display:block;font-size:.88em;color:var(--muted)}
+.setup-label{margin:28px 0 12px;font-weight:500;text-align:center}
+.langs-row{display:flex;justify-content:center}
+.setup .mode{min-width:150px;padding:14px 28px;font-size:18px}
+.setup .email,.staff .email{max-width:none;margin-top:28px}
+.start-row{padding:0 0 64px;text-align:center}
+.btn.huge{min-width:min(100%,340px);padding:20px 56px;font-size:23px}
+.start-row .small{max-width:34em;margin:16px auto 0}
+.email{display:grid;gap:6px;max-width:26em;margin:0 0 4px;font-weight:500}
+.email-err{margin:6px 0 0;font-size:15px;font-weight:500;color:var(--err)}
+.email-err:empty{display:none}
+.email.bad .txt{border-color:var(--err)}
+
+/* section header with the filling cup */
+.sec-head{display:flex;align-items:flex-end;gap:16px;padding:22px 0 16px;border-bottom:2px solid var(--pearl)}
+.cupmeter{flex:none;width:44px;height:60px}
+.tea{transform-box:fill-box;transform-origin:50% 100%;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.tea{transition:none}}
+.part{margin:0 0 4px;font-size:14px;color:var(--muted)}
+.sec-head h2{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;font-size:clamp(26px,4.6vw,36px);line-height:1.1;font-variation-settings:"opsz" 48}
+.sec-head .zh{font-size:.62em;font-weight:400;color:var(--muted)}
+.hlogo{display:inline-flex}
+.hlogo .logo{width:46px;border:1px solid var(--rule)}
+.hlogo .logo.nologo{display:none}
+.sec-intro{margin:14px 0 0;color:var(--muted)}
+
+/* questions */
+.q{padding:26px 0;border-bottom:1px solid var(--rule)}
+.q-head{display:flex;gap:12px;align-items:baseline}
+.q-num{flex:none;min-width:38px;font-size:14px;font-weight:700;color:var(--leaf)}
+.q-text{font-size:19px;font-weight:500;line-height:1.35}
+.q-hint,.q-body,.q-err{margin-left:50px}
+.q-hint{margin-top:4px;margin-bottom:0;font-size:15px;color:var(--muted)}
+.q-body{margin-top:14px}
+.q-err{display:none;margin-top:12px;margin-bottom:0;font-size:15px;font-weight:500;color:var(--err)}
+.q.err .q-err,.q.warn .q-err{display:block}
+.q.err .q-num{color:var(--err)}
+@media(max-width:560px){.q-hint,.q-body,.q-err{margin-left:0}}
+
+/* options */
+.opts{display:grid;gap:8px}
+.opts.c2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.opts.h{grid-template-columns:repeat(auto-fit,minmax(104px,1fr))}
+.opt{position:relative;display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid var(--rule);border-radius:12px;background:var(--cup);cursor:pointer;line-height:1.3}
+.opts.h .opt{flex-direction:column;justify-content:center;gap:7px;padding:12px 8px;text-align:center;font-size:15px}
+.opt input,.tile input,.gb input{position:absolute;opacity:0;pointer-events:none}
+.mk{position:relative;flex:none;width:20px;height:20px;border:2px solid var(--pearl);border-radius:50%}
+.opt.cb .mk{border-radius:5px}
+.opt:hover{border-color:var(--pearl)}
+.opt.on{background:var(--pearl);border-color:var(--pearl);color:#fff}
+.opt.on .mk{border-color:#fff;background:#fff}
+.opt.on .mk::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--pearl)}
+.opt.cb.on .mk::after{inset:auto;left:5px;top:1px;width:6px;height:11px;border-radius:0;background:none;border:solid var(--pearl);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.opt:focus-within,.tile:focus-within,.gb:focus-within{outline:3px solid var(--amber);outline-offset:2px}
+.other,.txt{width:100%;padding:11px 14px;border:1.5px solid var(--rule);border-radius:12px;background:var(--cup)}
+.other{grid-column:1/-1}
+.other:focus,.txt:focus{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--pearl)}
+
+/* logo tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+@media(max-width:600px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 10px 12px;border:1.5px solid var(--rule);border-radius:16px;background:var(--cup);cursor:pointer;text-align:center}
+.tile:hover{border-color:var(--pearl)}
+.tname{font-size:14px;line-height:1.3}
+.tick{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;border:2px solid var(--rule);background:#fff}
+.tile.on{border-color:var(--pearl);box-shadow:inset 0 0 0 2px var(--pearl)}
+.tile.on .tick{background:var(--pearl);border-color:var(--pearl)}
+.tile.on .tick::after{content:"";position:absolute;left:6px;top:3px;width:6px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.logo{display:grid;place-items:center;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:10px;background:#fff}
+.logo img{max-width:88%;max-height:88%;object-fit:contain}
+.logo .fb{display:none;padding:6px;font-size:20px;font-weight:700;line-height:1.2;text-align:center}
+.logo .fb small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.logo.nologo img{display:none}
+.logo.nologo .fb{display:block}
+
+/* Likert grids: the answer buttons are pearls */
+.legend{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;margin-bottom:4px;font-size:14px;color:var(--muted)}
+.grow{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;padding:10px 0;border-top:1px dashed var(--rule)}
+.glabel{flex:1;min-width:0;line-height:1.35}
+.grow.miss .glabel{color:var(--err);font-weight:500}
+.gbtns{display:flex;gap:6px;flex:none}
+.gb{position:relative;display:grid;place-items:center;width:40px;height:40px;border:1.5px solid var(--rule);border-radius:50%;background:var(--cup);font-weight:500;cursor:pointer}
+.gb:hover{border-color:var(--pearl)}
+.gb.on{background:var(--pearl);border-color:var(--pearl);color:#fff}
+@media(max-width:560px){.grow{flex-direction:column;align-items:stretch}.gbtns{justify-content:space-between}.gb{width:44px;height:44px}}
+
+/* buttons, end screen */
+.nav{display:flex;justify-content:space-between;gap:12px;padding:28px 0 64px}
+.btn{border:1.5px solid var(--pearl);background:transparent;border-radius:999px;padding:11px 24px;font-weight:500;cursor:pointer}
+.btn.primary{background:var(--pearl);color:#fff}
+.btn.primary:hover{background:var(--leaf);border-color:var(--leaf)}
+.btn.big{padding:15px 32px;font-size:18px}
+.btn.danger{border-color:var(--err);color:var(--err)}
+.btn:focus-visible,.mode:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.end{padding-top:56px;padding-bottom:64px;text-align:center}
+.end .cupmeter{display:block;width:84px;height:116px;margin:0 auto 20px}
+.end h1{font-size:clamp(36px,6vw,52px)}
+.end .lead{margin-left:auto;margin-right:auto}
+
+/* phones */
+@media(max-width:560px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .topbar{flex-wrap:wrap;padding:10px 16px 0}
+  .tb-title{font-size:14px}
+  .mode{padding:6px 11px;font-size:13px}
+  .lead{font-size:17px}
+  .q{padding:20px 0}
+  .q-text{font-size:17px}
+  .opts.h{grid-template-columns:1fr}
+  .opts.h .opt{flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;text-align:left;font-size:inherit}
+  .opts.c2{grid-template-columns:1fr}
+  .nav{position:sticky;bottom:0;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--film);border-top:1px solid var(--rule)}
+  .nav .btn{flex:1}
+  .btn.big{width:100%}
+  .end{padding-top:32px}
+}
+/* no sticky hover on touch screens */
+@media(hover:none){.opt:hover,.tile:hover,.gb:hover{border-color:var(--rule)}.opt.on:hover,.tile.on:hover,.gb.on:hover{border-color:var(--pearl)}}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="tb-title" id="tb-title">Bubble tea survey</span>
+</div>
+<main id="app"></main>
+
+<script>
+"use strict";
+
+/* ===================== 1. SETTINGS (edit these) ===================== */
+const STUDY = {
+  course: "Marketing Research",
+  group: "Group 5",
+  school: "",                         // shown on the paper form, e.g. "National Taiwan University"
+  minutes: 5,
+  storageKey: "group5_bubbletea_v2",
+  staffPassword: "bubble123",         // unlocks survey.html#staff; anyone reading the page source can see it
+  sheetUrl: "https://script.google.com/macros/s/AKfycbyggiyPBi2roLMi9AxaoiA-oibqNZdsON-uYIQf8Zr_jY9_Y7wLRLR8Rm-IkcGfPPQ4/exec",
+  // ^ Google Apps Script web app URL (README.md); empty = answers stay only in this browser
+};
+
+// Logo tiles. Put the image files in a folder called "logos" next to this HTML file.
+const BRANDS = [
+  { id: "chingshin", name: "Chingshin Fu Chuan", zh: "清心福全",       logo: "logos/chingshin.png" },
+  { id: "kebuke",    name: "Kebuke",             zh: "可不可熟成紅茶", logo: "logos/kebuke.png" },
+  { id: "50lan",     name: "50 Lan",             zh: "50嵐",           logo: "logos/50lan.png" },
+  { id: "hachiyo",   name: "Hachiyo",            zh: "八曜和茶",       logo: "logos/hachiyo.png" }
+];
+const SHOW_NAMES_UNDER_LOGOS = true;  // false = recognition by logo only
+
+/* ===================== 2. ANSWER LISTS AND SCALES ===================== */
+const FREQ = [[5, "4 or more times a week"], [4, "2–3 times a week"], [3, "Once a week"], [2, "1–3 times a month"], [1, "Less than once a month"]];
+const ASSOC = [[1, "Low price / good value"], [2, "Consistent taste"], [3, "Stores everywhere"], [4, "Classic, long-established"], [5, "New drinks and collaborations"], [6, "Quality ingredients"], [7, "Trendy, stylish"], [8, "Nothing in particular"]];
+const SEEN5 = [[1, "Never"], [2, "Rarely"], [3, "Sometimes"], [4, "Often"], [5, "Very often"]];
+const LIKE5 = [[1, "Don't like it at all"], [2, "Don't like it"], [3, "Neutral"], [4, "Like it"], [5, "Like it very much"]];
+const MAIN = [[1, "50 Lan 50嵐"], [2, "Chingshin Fu Chuan 清心福全"], [3, "Kebuke 可不可"], [4, "Hachiyo 八曜和茶"], [5, "Milksha 迷客夏"], [6, "UG Tea"], [7, "CoCo 都可"], [8, "Macu 麻古茶坊"], [99, "Other", true]];
+const MKT_GROUP = { 1: "minimal", 2: "mixed", 3: "heavy", 4: "heavy" };   // Q9_shops code → marketing intensity of the brand
+const AGREE = { labels: ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"] };
+
+/* ===================== 2b. CHINESE TRANSLATION ===================== */
+// Online survey only; the paper version stays in English. Keys are the English texts,
+// so a text missing here simply shows in English. {x} marks a value filled in at runtime.
+const ZH = {
+  // welcome, navigation, messages
+  "Bubble tea survey": "手搖飲問卷",
+  "What makes you buy bubble tea?": "是什麼讓你買手搖飲？",
+  "We're students in a {c} course. We want to learn which discounts, memberships, collaborations and social media posts make people buy bubble tea, and whether Taiwanese and international customers react differently.":
+    "我們是{c}課程的學生。我們想了解哪些折扣、會員制度、聯名活動和社群貼文會讓人購買手搖飲，以及台灣人和外國人的反應是否不同。",
+  "Takes about {m} minutes": "大約需要 {m} 分鐘",
+  "For students and non-students living in Taiwan": "適合住在台灣的學生和非學生",
+  "Your answers are used only for our class project": "你的回答只會用於我們的課堂專題",
+  "Your email": "你的電子郵件",
+  "We ask for your email only to make sure each person answers once. We will never contact you or share it.": "我們只用電子郵件確認每人只填寫一次，不會用它聯絡你，也不會分享給任何人。",
+  "Please enter a valid email address.": "請輸入有效的電子郵件地址。",
+  "Start the survey": "開始填寫",
+  "Before we start": "開始之前",
+  "By starting, you agree to take part. You can stop at any time.": "開始填寫即表示你同意參與，你可以隨時停止。",
+  "Part {p} of {n}": "第 {p} 部分，共 {n} 部分",
+  ", brand {i} of {k}": "，品牌 {i}／{k}",
+  "Back": "上一頁", "Next": "下一頁", "Finish": "完成",
+  "Choose all that apply.": "可複選。",
+  "Choose up to {n}.": "最多選 {n} 項。",
+  "You can choose up to {n}. Untick one first.": "最多只能選 {n} 項，請先取消一項。",
+  "Type the shop name": "請輸入店名", "Other shop name": "其他店名",
+  "Please answer this question.": "請回答這一題。",
+  "Please answer every statement.": "請回答每一個敘述。",
+  "Please type the shop name.": "請輸入店名。",
+  "Thank you!": "謝謝！",
+  "Your answers are saved. 謝謝您的參與！": "你的回答已儲存，謝謝你的參與！",
+  "Start a new response": "開始新的填答",
+  "Checking…": "檢查中…",
+  "This email has already been used to answer the survey.": "這個電子郵件已經填寫過問卷了。",
+  "Saving your answers…": "正在儲存你的回答…",
+  "We couldn't send your answers. Please check your internet connection and try again.": "無法送出你的回答，請檢查網路連線後再試一次。",
+  "Try again": "再試一次",
+  // sections
+  "About you": "關於你", "Your bubble tea habits": "你的手搖飲習慣", "Discounts and membership": "折扣與會員",
+  "Collaborations and social media": "聯名與社群媒體", "Choosing a shop": "選擇飲料店",
+  "Brands you know": "你認識的品牌", "After a campaign": "活動結束之後",
+  "There are no right or wrong answers. Go with your first reaction.": "答案沒有對錯，請依照你的第一直覺作答。",
+  "You said you know this brand. Three quick questions about it.": "你說你認識這個品牌，接下來有三個簡短的問題。",
+  // Q1–Q6
+  "Which of these describes you?": "以下哪一項最符合你的身分？",
+  "Taiwanese student": "台灣學生", "International student (including exchange)": "國際學生（包含交換生）",
+  "Taiwanese, not a student": "台灣人，非學生", "International, not a student": "外籍人士，非學生",
+  "Age": "年齡", "30 or older": "30 歲以上",
+  "Gender": "性別", "Male": "男", "Female": "女", "Other / prefer not to say": "其他／不願透露",
+  "What are you studying right now?": "你目前就讀的學位是？",
+  "Bachelor's": "學士", "Master's": "碩士", "PhD": "博士", "Exchange": "交換生",
+  "Where are you from?": "你來自哪裡？",
+  "Europe": "歐洲", "Africa": "非洲", "North America": "北美洲", "Latin America": "拉丁美洲",
+  "Australia & Oceania": "澳洲及大洋洲", "Southeast Asia": "東南亞",
+  "East Asia (Japan, Korea, China, Hong Kong, Macau)": "東亞（日本、韓國、中國、香港、澳門）", "Other Asia": "亞洲其他地區",
+  "How long have you been in Taiwan?": "你在台灣待多久了？",
+  "Less than 6 months": "未滿 6 個月", "6–12 months": "6–12 個月", "1–2 years": "1–2 年", "More than 2 years": "超過 2 年",
+  // Q7–Q9
+  "How often do you buy bubble tea?": "你多久買一次手搖飲？",
+  "4 or more times a week": "每週 4 次以上", "2–3 times a week": "每週 2–3 次", "Once a week": "每週 1 次",
+  "1–3 times a month": "每月 1–3 次", "Less than once a month": "每月不到 1 次",
+  "How much do you usually pay for one drink?": "你通常一杯飲料花多少錢？",
+  "Under NT$50": "未滿 NT$50", "NT$100 or more": "NT$100 以上",
+  "Which bubble tea shops do you usually buy from?": "你通常在哪些手搖飲店購買？",
+  "Other": "其他",
+  // agreement grids Q10–Q15
+  "How much do you agree with these statements about {t}?": "你對以下關於「{t}」的敘述同意程度為何？",
+  "Strongly disagree": "非常不同意", "Disagree": "不同意", "Neutral": "普通", "Agree": "同意", "Strongly agree": "非常同意",
+  "discounts and deals": "折扣與優惠",
+  "Bubble tea discounts are attractive to me.": "手搖飲的折扣對我很有吸引力。",
+  "I notice buy-one-get-one deals at bubble tea shops.": "我會注意手搖飲店的買一送一優惠。",
+  "A shop with deals stands out to me.": "有優惠的店家會讓我特別注意。",
+  "memberships and app points": "會員與 APP 點數",
+  "App points and member rewards are worth it to me.": "我覺得 APP 點數和會員回饋很划算。",
+  "I want to join bubble tea shop memberships.": "我想加入手搖飲店的會員。",
+  "Joining a bubble tea shop membership is easy for me.": "加入手搖飲店的會員對我來說很容易。",
+  "collaborations and limited editions": "聯名與限定商品",
+  "Collaborations between bubble tea shops and other brands or influencers are attractive to me.": "手搖飲店與其他品牌或網紅的聯名對我很有吸引力。",
+  "Limited-edition or seasonal drinks interest me.": "限定或季節性飲品讓我感興趣。",
+  "Please choose 2 (Disagree) for this statement.": "這一題請選 2（不同意）。",
+  "Collaboration cups or merchandise catch my attention.": "聯名杯或周邊商品會吸引我的注意。",
+  "bubble tea shops on social media": "手搖飲店的社群媒體",
+  "I often see bubble tea shops' posts on social media.": "我常在社群媒體上看到手搖飲店的貼文。",
+  "Influencer recommendations about bubble tea catch my attention.": "網紅推薦的手搖飲會吸引我的注意。",
+  "Bubble tea shops' social media content is attractive to me.": "手搖飲店的社群內容對我很有吸引力。",
+  "how you choose a bubble tea shop": "你如何選擇手搖飲店",
+  "I prefer bubble tea brands I already know.": "我比較喜歡已經認識的手搖飲品牌。",
+  "I usually choose bubble tea shops out of habit.": "我通常習慣性地選擇手搖飲店。",
+  "I trust brands that have been around for a long time.": "我信任經營很久的品牌。",
+  "buying from bubble tea shops": "在手搖飲店消費",
+  "When a bubble tea shop catches my interest, I am likely to buy from it.": "當一家手搖飲店引起我的興趣，我很可能會去購買。",
+  "I am willing to try bubble tea shops I have not bought from before.": "我願意嘗試沒買過的手搖飲店。",
+  "I intend to buy from a new bubble tea shop in the near future.": "我打算近期去一家新的手搖飲店購買。",
+  // Q16–Q17
+  "Which of these bubble tea brands do you know?": "你認識以下哪些手搖飲品牌？",
+  "Tap every logo you recognise.": "請點選所有你認得的標誌。",
+  "I don't know any of these brands": "這些品牌我都不認識",
+  "Which of these describe {n} for you?": "對你來說，以下哪些項目能形容{n}？",
+  "Low price / good value": "價格低／CP 值高", "Consistent taste": "口味穩定", "Stores everywhere": "店到處都有",
+  "Classic, long-established": "經典老字號", "New drinks and collaborations": "常有新品和聯名", "Quality ingredients": "用料實在",
+  "Trendy, stylish": "時尚潮流", "Nothing in particular": "沒有特別印象",
+  "How often do you see ads, collaborations or social media posts from {n}?": "你多常看到{n}的廣告、聯名或社群貼文？",
+  "Never": "從未", "Rarely": "很少", "Sometimes": "有時候", "Often": "經常", "Very often": "非常頻繁",
+  "How much do you like {n}?": "你有多喜歡{n}？",
+  "Don't like it at all": "非常不喜歡", "Don't like it": "不喜歡", "Like it": "喜歡", "Like it very much": "非常喜歡",
+  // Q18–Q21
+  "In the past 3 months, have you bought bubble tea mainly because of any of these?": "過去 3 個月內，你是否主要因為以下原因而購買手搖飲？",
+  "A discount or buy-one-get-one offer": "折扣或買一送一", "Membership or app points rewards": "會員或 APP 點數回饋",
+  "A collaboration cup or merchandise": "聯名杯或周邊商品", "A limited-edition or seasonal drink": "限定或季節飲品",
+  "A social media post or influencer": "社群貼文或網紅", "None of these": "以上皆無",
+  "After that offer or campaign ended, did you keep buying from that shop?": "優惠或活動結束後，你還有繼續在那家店購買嗎？",
+  "Yes, I still buy there regularly": "有，我還是經常去買", "No, I stopped": "沒有，我不再去買了",
+  "Which ONE of these would most likely make you try a bubble tea shop you have never bought from?": "以下哪「一項」最可能讓你嘗試一家沒買過的手搖飲店？",
+  "A membership welcome gift or app points": "入會禮或 APP 點數", "A collaboration or limited-edition drink": "聯名或限定飲品",
+  "A social media post or influencer recommendation": "社群貼文或網紅推薦", "A friend's recommendation": "朋友推薦",
+  "Nothing, I stick to shops I know": "都不會，我只去熟悉的店",
+  "Which statement is closest to your view?": "哪一個敘述最接近你的看法？",
+  "A brand that advertises a lot seems more attractive to me": "常打廣告的品牌對我來說更有吸引力",
+  "Advertising makes no difference to me": "廣告對我沒有影響",
+  "A brand that doesn't need to advertise seems more trustworthy to me": "不需要打廣告的品牌讓我覺得更值得信任"
+};
+let lang = "en";
+const tr = s => (lang === "zh" && ZH[s]) || s;
+const fill = (t, vars = {}) => t.replace(/\{(\w+)\}/g, (m, k) => vars[k]);
+const fmt = (key, vars) => fill(tr(key), vars);
+const zhOf = (key, vars) => fill(ZH[key] || key, vars);   // welcome page shows both languages
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l === "zh" ? "zh-Hant-TW" : "en";
+  document.getElementById("tb-title").textContent = tr("Bubble tea survey");
+}
+
+/* ===================== 3. QUESTIONNAIRE ===================== */
+const isStudent = a => [1, 2].includes(a.Q1_student);
+const isIntl = a => [2, 4].includes(a.Q1_student);
+const boughtByPromo = a => Array.isArray(a.Q18_because) && a.Q18_because.length > 0 && !a.Q18_because.includes(6);
+const knows = id => a => (a.Q16_aware || []).includes(id);
+const bname = b => `<b>${b.name}</b> ${b.zh}`;
+const agreeGrid = (id, v, topic, rows) => ({ id, v, t: "grid", scale: AGREE, construct: true,
+  text: () => fmt("How much do you agree with these statements about {t}?", { t: tr(topic) }), rows });
+
+function brandSection(b) {
+  const p = "B_" + b.id, n = bname(b);
+  return {
+    id: "s6_" + b.id, part: 6, brand: b, show: knows(b.id),
+    intro: "You said you know this brand. Three quick questions about it.",
+    qs: [
+      { id: "Q17a", v: p + "_assoc", t: "multi", excl: 8, cols: true, text: () => fmt("Which of these describe {n} for you?", { n }), opts: ASSOC },
+      { id: "Q17b", v: p + "_seen", t: "single", h: true, text: () => fmt("How often do you see ads, collaborations or social media posts from {n}?", { n }), opts: SEEN5 },
+      { id: "Q17c", v: p + "_like", t: "single", h: true, text: () => fmt("How much do you like {n}?", { n }), opts: LIKE5 }
+    ]
+  };
+}
+
+const SECTIONS = [
+  { id: "s1", part: 1, title: "About you", qs: [
+    { id: "Q1", v: "Q1_student", t: "single", text: "Which of these describes you?",
+      opts: [[1, "Taiwanese student"], [2, "International student (including exchange)"], [3, "Taiwanese, not a student"], [4, "International, not a student"]] },
+    { id: "Q2", v: "Q2_age", t: "single", h: true, text: "Age",
+      opts: [[1, "18–20"], [2, "21–24"], [3, "25–29"], [4, "30 or older"]] },
+    { id: "Q3", v: "Q3_gender", t: "single", h: true, text: "Gender",
+      opts: [[1, "Male"], [2, "Female"], [3, "Other / prefer not to say"]] },
+    { id: "Q4", v: "Q4_degree", t: "single", h: true, show: isStudent, text: "What are you studying right now?",
+      opts: [[1, "Bachelor's"], [2, "Master's"], [3, "PhD"], [4, "Exchange"]] },
+    { id: "Q5", v: "Q5_region", t: "single", cols: true, show: isIntl, text: "Where are you from?",
+      opts: [[1, "Europe"], [2, "Africa"], [3, "North America"], [4, "Latin America"], [5, "Australia & Oceania"], [6, "Southeast Asia"], [7, "East Asia (Japan, Korea, China, Hong Kong, Macau)"], [8, "Other Asia"]] },
+    { id: "Q6", v: "Q6_time", t: "single", show: isIntl, text: "How long have you been in Taiwan?",
+      opts: [[1, "Less than 6 months"], [2, "6–12 months"], [3, "1–2 years"], [4, "More than 2 years"]] }
+  ]},
+  { id: "s2", part: 2, title: "Your bubble tea habits", qs: [
+    { id: "Q7", v: "Q7_freq", t: "single", text: "How often do you buy bubble tea?", opts: FREQ },
+    { id: "Q8", v: "Q8_spend", t: "single", h: true, text: "How much do you usually pay for one drink?",
+      opts: [[1, "Under NT$50"], [2, "NT$50–64"], [3, "NT$65–79"], [4, "NT$80–99"], [5, "NT$100 or more"]] },
+    { id: "Q9", v: "Q9_shops", t: "multi", cols: true, text: "Which bubble tea shops do you usually buy from?", opts: MAIN }
+  ]},
+  { id: "s3", part: 3, title: "Discounts and membership", intro: "There are no right or wrong answers. Go with your first reaction.", qs: [
+    agreeGrid("Q10", "X1", "discounts and deals", [
+      ["1", "Bubble tea discounts are attractive to me."],
+      ["2", "I notice buy-one-get-one deals at bubble tea shops."],
+      ["3", "A shop with deals stands out to me."]]),
+    agreeGrid("Q11", "X2", "memberships and app points", [
+      ["1", "App points and member rewards are worth it to me."],
+      ["2", "I want to join bubble tea shop memberships."],
+      ["3", "Joining a bubble tea shop membership is easy for me."]])
+  ]},
+  { id: "s4", part: 4, title: "Collaborations and social media", qs: [
+    agreeGrid("Q12", "X3", "collaborations and limited editions", [
+      ["1", "Collaborations between bubble tea shops and other brands or influencers are attractive to me."],
+      ["2", "Limited-edition or seasonal drinks interest me."],
+      ["attn", "Please choose 2 (Disagree) for this statement."],
+      ["3", "Collaboration cups or merchandise catch my attention."]]),
+    agreeGrid("Q13", "X4", "bubble tea shops on social media", [
+      ["1", "I often see bubble tea shops' posts on social media."],
+      ["2", "Influencer recommendations about bubble tea catch my attention."],
+      ["3", "Bubble tea shops' social media content is attractive to me."]])
+  ]},
+  { id: "s5", part: 5, title: "Choosing a shop", qs: [
+    agreeGrid("Q14", "X5", "how you choose a bubble tea shop", [
+      ["1", "I prefer bubble tea brands I already know."],
+      ["2", "I usually choose bubble tea shops out of habit."],
+      ["3", "I trust brands that have been around for a long time."]]),
+    agreeGrid("Q15", "Y", "buying from bubble tea shops", [
+      ["1", "When a bubble tea shop catches my interest, I am likely to buy from it."],
+      ["2", "I am willing to try bubble tea shops I have not bought from before."],
+      ["3", "I intend to buy from a new bubble tea shop in the near future."]])
+  ]},
+  { id: "s6", part: 6, title: "Brands you know", qs: [
+    { id: "Q16", v: "Q16_aware", t: "multi", tiles: true, excl: "none", hint: "Tap every logo you recognise.",
+      text: "Which of these bubble tea brands do you know?",
+      opts: BRANDS.map(b => [b.id, b.name]).concat([["none", "I don't know any of these brands"]]) }
+  ]},
+  ...BRANDS.map(brandSection),
+  { id: "s7", part: 7, title: "After a campaign", qs: [
+    { id: "Q18", v: "Q18_because", t: "multi", excl: 6, text: "In the past 3 months, have you bought bubble tea mainly because of any of these?",
+      opts: [[1, "A discount or buy-one-get-one offer"], [2, "Membership or app points rewards"], [3, "A collaboration cup or merchandise"], [4, "A limited-edition or seasonal drink"], [5, "A social media post or influencer"], [6, "None of these"]] },
+    { id: "Q19", v: "Q19_after", t: "single", show: boughtByPromo,
+      text: "After that offer or campaign ended, did you keep buying from that shop?",
+      opts: [[1, "Yes, I still buy there regularly"], [2, "Sometimes"], [3, "Rarely"], [4, "No, I stopped"]] },
+    { id: "Q20", v: "Q20_trynew", t: "single", text: "Which ONE of these would most likely make you try a bubble tea shop you have never bought from?",
+      opts: [[1, "A discount or buy-one-get-one offer"], [2, "A membership welcome gift or app points"], [3, "A collaboration or limited-edition drink"], [4, "A social media post or influencer recommendation"], [5, "A friend's recommendation"], [6, "Nothing, I stick to shops I know"]] },
+    { id: "Q21", v: "Q21_attitude", t: "single", text: "Which statement is closest to your view?",
+      opts: [[1, "A brand that advertises a lot seems more attractive to me"], [2, "Advertising makes no difference to me"], [3, "A brand that doesn't need to advertise seems more trustworthy to me"]] }
+  ]}
+];
+const PARTS = Math.max(...SECTIONS.map(s => s.part));
+
+/* ===================== 4. ONLINE SURVEY ENGINE ===================== */
+const app = document.getElementById("app");
+let A = {}, meta = null, cur = null, lastLevel = 0, clipN = 0, draftEmail = "", sending = false;
+let MEM = [];
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const val = x => typeof x === "function" ? x(A) : x;
+const shown = x => !x.show || x.show(A);
+const otherCode = q => { const o = (q.opts || []).find(x => x[2]); return o ? o[0] : undefined; };
+const motionOK = () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function logoHTML(b) {
+  return `<span class="logo"><img src="${b.logo}" alt="${esc(b.name)} logo" onerror="this.parentNode.classList.add('nologo')"><span class="fb">${b.zh}<small>${esc(b.name)}</small></span></span>`;
+}
+
+function cupSVG(level) {
+  const id = "cupclip" + (++clipN);
+  return `<svg class="cupmeter" viewBox="0 0 48 66" aria-hidden="true" focusable="false">
+<defs><clipPath id="${id}"><polygon points="6,16 42,16 38,64 10,64"/></clipPath></defs>
+<line x1="24" y1="44" x2="32" y2="2" stroke="#2F5D3A" stroke-width="4" stroke-linecap="round"/>
+<g clip-path="url(#${id})"><rect class="tea" x="0" y="16" width="48" height="48" fill="#C98B2B" style="transform:scaleY(${level})"/>
+<g fill="#2A1F1A"><circle cx="14.5" cy="59.5" r="3"/><circle cx="21" cy="60.5" r="3"/><circle cx="27.5" cy="59.5" r="3"/><circle cx="34" cy="60.5" r="2.7"/><circle cx="18" cy="54" r="2.8"/><circle cx="25" cy="54.5" r="2.8"/><circle cx="31.5" cy="54" r="2.7"/></g></g>
+<polygon points="6,16 42,16 38,64 10,64" fill="none" stroke="#2A1F1A" stroke-width="2" stroke-linejoin="round"/>
+<rect x="3.5" y="12" width="41" height="4.5" rx="2.2" fill="#2A1F1A"/></svg>`;
+}
+
+const HERO_CUP = `<svg class="cup-hero" viewBox="0 0 240 330" role="img" aria-label="A bubble tea cup with an order sticker">
+<defs><clipPath id="heroclip"><polygon points="30,70 210,70 190,322 50,322"/></clipPath></defs>
+<line x1="132" y1="230" x2="166" y2="8" stroke="#2F5D3A" stroke-width="16" stroke-linecap="round"/>
+<g clip-path="url(#heroclip)">
+<rect x="0" y="118" width="240" height="212" fill="#C98B2B"/>
+<g fill="#2A1F1A">
+<circle cx="70" cy="303" r="11"/><circle cx="95" cy="306" r="11"/><circle cx="120" cy="303" r="11"/><circle cx="145" cy="306" r="11"/><circle cx="170" cy="303" r="11"/>
+<circle cx="82" cy="283" r="11"/><circle cx="107" cy="285" r="11"/><circle cx="132" cy="283" r="11"/><circle cx="157" cy="285" r="11"/>
+<circle cx="96" cy="263" r="10"/><circle cx="121" cy="264" r="10"/><circle cx="146" cy="262" r="10"/>
+</g></g>
+<polygon points="30,70 210,70 190,322 50,322" fill="none" stroke="#2A1F1A" stroke-width="5" stroke-linejoin="round"/>
+<rect x="20" y="56" width="200" height="16" rx="8" fill="#2A1F1A"/>
+<g transform="rotate(-5 120 190)">
+<rect x="60" y="150" width="122" height="78" rx="3" fill="#FFFFFF" stroke="#2A1F1A" stroke-width="2"/>
+<text x="70" y="174" font-size="12.5" font-weight="700" fill="#2A1F1A">Survey milk tea</text>
+<text x="70" y="196" font-size="13" fill="#2A1F1A">半糖 少冰</text>
+<line x1="70" y1="206" x2="172" y2="206" stroke="#2A1F1A" stroke-dasharray="3 3"/>
+<text x="70" y="221" font-size="12" fill="#2A1F1A">${STUDY.minutes} min</text>
+<text x="172" y="221" font-size="12" font-weight="700" fill="#2A1F1A" text-anchor="end">NT$0</text>
+</g></svg>`;
+
+/* --- storage --- */
+function load() { try { return JSON.parse(localStorage.getItem(STUDY.storageKey) || "[]"); } catch (e) { return MEM; } }
+function save(all) { try { localStorage.setItem(STUDY.storageKey, JSON.stringify(all)); } catch (e) { MEM = all; } }
+
+/* --- page 1: welcome, in both languages --- */
+const LEAD = "We're students in a {c} course. We want to learn which discounts, memberships, collaborations and social media posts make people buy bubble tea, and whether Taiwanese and international customers react differently.";
+const both = (key, vars) => `${fill(key, vars)}<span class="zh-line">${zhOf(key, vars)}</span>`;
+
+function renderWelcome() {
+  cur = null;
+  setLang("en");
+  const c = { c: esc(STUDY.course) }, m = { m: STUDY.minutes };
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>What makes you buy bubble tea?</h1>
+        <p class="zh-sub">${zhOf("What makes you buy bubble tea?")}</p>
+        <p class="lead">${both(LEAD, c)}</p>
+        <ul class="facts">
+          <li>${both("Takes about {m} minutes", m)}</li>
+          <li>${both("For students and non-students living in Taiwan")}</li>
+          <li>${both("Your answers are used only for our class project")}</li>
+        </ul>
+      </div>
+      <div class="hero-cup">${HERO_CUP}</div>
+    </div>
+    <div class="start-row">
+      <button class="btn primary huge" id="start" type="button">Start · ${zhOf("Start the survey")}</button>
+      <p class="small">${both("By starting, you agree to take part. You can stop at any time.")}</p>
+    </div>
+  </div>`;
+  document.getElementById("start").onclick = renderSetup;
+  window.scrollTo(0, 0);
+}
+
+/* --- page 2: language and email --- */
+function renderSetup() {
+  cur = null;
+  app.innerHTML = `
+  <div class="wrap setup">
+    <header class="sec-head">${cupSVG(0)}<div><h2>${tr("Before we start")}</h2></div></header>
+    <p class="setup-label">Language / 語言</p>
+    <div class="langs-row"><div class="modes langs" role="group" aria-label="Language / 語言">
+      <button class="mode" type="button" data-lang="en" aria-pressed="${lang === "en"}">English</button>
+      <button class="mode" type="button" data-lang="zh" aria-pressed="${lang === "zh"}">中文</button>
+    </div></div>
+    <label class="email" id="email-l">${tr("Your email")}<input id="email" class="txt" type="email" autocomplete="email" inputmode="email" required></label>
+    <p class="small">${tr("We ask for your email only to make sure each person answers once. We will never contact you or share it.")}</p>
+    <p class="email-err" id="email-err" role="alert"></p>
+    <nav class="nav"><button class="btn" id="back" type="button">${tr("Back")}</button><button class="btn primary" id="next" type="button">${tr("Start the survey")}</button></nav>
+  </div>`;
+  const $ = id => document.getElementById(id);
+  $("email").value = draftEmail;
+  $("email").addEventListener("input", () => { draftEmail = $("email").value; $("email-l").classList.remove("bad"); $("email-err").textContent = ""; });
+  $("email").addEventListener("keydown", e => { if (e.key === "Enter") start(); });
+  app.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { setLang(b.dataset.lang); renderSetup(); });
+  $("back").onclick = () => { draftEmail = ""; renderWelcome(); };
+  $("next").onclick = start;
+  window.scrollTo(0, 0);
+}
+
+function renderStaffLogin() {
+  app.innerHTML = `
+  <div class="wrap staff">
+    <h2>Team access</h2>
+    <label class="email" id="pw-l">Password<input id="pw" class="txt" type="password" autocomplete="current-password"></label>
+    <p class="email-err" id="pw-err" role="alert"></p>
+    <div class="btnrow"><button class="btn primary" id="unlock" type="button">Unlock</button></div>
+  </div>`;
+  const pw = document.getElementById("pw");
+  const unlock = () => {
+    if (pw.value === STUDY.staffPassword) { staffOK = true; return renderStaff(); }
+    document.getElementById("pw-l").classList.add("bad");
+    document.getElementById("pw-err").textContent = "Wrong password.";
+    pw.select();
+  };
+  pw.addEventListener("keydown", e => { if (e.key === "Enter") unlock(); });
+  document.getElementById("unlock").onclick = unlock;
+  pw.focus();
+}
+
+async function start() {
+  const email = draftEmail.trim().toLowerCase();
+  const fail = msg => {
+    document.getElementById("email-l").classList.add("bad");
+    document.getElementById("email-err").textContent = tr(msg);
+    document.getElementById("email").focus();
+  };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Please enter a valid email address.");
+  if (STUDY.sheetUrl) {
+    const btn = document.getElementById("next");
+    btn.disabled = true; btn.textContent = tr("Checking…");
+    let used = false;
+    try { used = (await postSheet({ action: "check", email })).exists === true; }
+    catch (e) { /* no connection: let them answer; the sheet rejects a repeated email on submit */ }
+    if (!document.body.contains(btn)) return;   // left the page while waiting
+    btn.disabled = false; btn.textContent = tr("Start the survey");
+    if (used) return fail("This email has already been used to answer the survey.");
+  }
+  draftEmail = "";
+  A = {}; lastLevel = 0;
+  meta = { id: Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(),
+           start: new Date().toISOString(), lang, email };
+  renderSection(SECTIONS[0]);
+}
+
+/* --- hidden page for the team: survey.html#staff --- */
+let staffOK = false;
+
+function renderStaff() {
+  cur = null;
+  setLang("en");
+  if (!staffOK) return renderStaffLogin();
+  const n = load().length;
+  app.innerHTML = `
+  <div class="wrap staff">
+    <h2>Saved responses</h2>
+    <p>${n} ${n === 1 ? "response" : "responses"} saved in this browser${STUDY.sheetUrl ? `, ${load().filter(r => r.sent === false).length} not yet sent to Google Sheets` : ""}.</p>
+    <div class="btnrow">
+      <button class="btn" id="exp" type="button">Download responses (CSV)</button>
+      <button class="btn danger" id="clr" type="button">Delete saved responses</button>
+    </div>
+    <p class="small">Respondents never see this page. Open it at <b>survey.html#staff</b>.</p>
+  </div>`;
+  document.getElementById("exp").onclick = exportCSV;
+  document.getElementById("clr").onclick = () => {
+    if (n && confirm(`Delete all ${n} saved responses from this browser? Download the CSV first if you still need them.`)) { save([]); renderStaff(); }
+  };
+  window.scrollTo(0, 0);
+}
+
+/* --- one section = one page --- */
+function renderSection(sec) {
+  cur = sec;
+  const vis = SECTIONS.filter(shown);
+  const level = vis.indexOf(sec) / vis.length;
+  let sub = "";
+  if (sec.brand) { const kb = vis.filter(s => s.brand); sub = fmt(", brand {i} of {k}", { i: kb.indexOf(sec) + 1, k: kb.length }); }
+  const title = sec.brand
+    ? `<span class="hlogo">${logoHTML(sec.brand)}</span>${esc(sec.brand.name)} <span class="zh">${sec.brand.zh}</span>`
+    : esc(tr(sec.title));
+  app.innerHTML = `
+  <div class="wrap">
+    <header class="sec-head with-bar">${cupSVG(lastLevel)}<div><p class="part">${fmt("Part {p} of {n}", { p: sec.part, n: PARTS })}${sub}</p><h2>${title}</h2></div></header>
+    <div class="progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100"><div class="progress-fill" style="width:${Math.round(lastLevel * 100)}%"></div></div>
+    ${sec.intro ? `<p class="sec-intro">${tr(sec.intro)}</p>` : ""}
+    <div class="qs"></div>
+    <nav class="nav"><button class="btn" id="back" type="button">${tr("Back")}</button><button class="btn primary" id="next" type="button">${tr("Next")}</button></nav>
+  </div>`;
+  const box = app.querySelector(".qs");
+  sec.qs.forEach(q => box.appendChild(renderQ(q)));
+  app.querySelector("#back").onclick = goBack;
+  app.querySelector("#next").onclick = goNext;
+  refresh();
+  window.scrollTo(0, 0);
+  fillCup(level);
+  setProgress(level);
+}
+
+// slides the bar from the previous page's level to this one
+function setProgress(level) {
+  const bar = app.querySelector(".progress");
+  if (!bar) return;
+  const pct = Math.round(level * 100);
+  bar.setAttribute("aria-valuenow", pct);
+  bar.firstChild.getBoundingClientRect();
+  requestAnimationFrame(() => { bar.firstChild.style.width = pct + "%"; });
+}
+
+function fillCup(level) {
+  const t = app.querySelector(".cupmeter .tea");
+  if (t) { t.getBoundingClientRect(); requestAnimationFrame(() => { t.style.transform = `scaleY(${level})`; }); }
+  lastLevel = level;
+}
+
+function renderQ(q) {
+  const c = document.createElement("div");
+  c.className = "q"; c._q = q;
+  const hint = q.hint ? tr(q.hint) : q.t === "multi" ? (q.max ? fmt("Choose up to {n}.", { n: q.max }) : tr("Choose all that apply.")) : "";
+  c.innerHTML = `<div class="q-head"><span class="q-num">${q.id}</span><div class="q-text"></div></div>`
+    + (hint ? `<p class="q-hint">${hint}</p>` : "")
+    + `<div class="q-body"></div><p class="q-err" role="alert"></p>`;
+  const body = c.querySelector(".q-body");
+  if (q.t === "grid") body.appendChild(renderGrid(q, c));
+  else body.appendChild(renderOpts(q, c));
+  return c;
+}
+
+function renderOpts(q, c) {
+  const multi = q.t === "multi", frag = document.createDocumentFragment();
+  const tiles = document.createElement("div"); tiles.className = "tiles";
+  const list = document.createElement("div"); list.className = "opts" + (q.h ? " h" : "") + (q.cols ? " c2" : "");
+  if (q.tiles) frag.appendChild(tiles);
+  frag.appendChild(list);
+  q.opts.forEach(([code, label, other]) => {
+    const brand = q.tiles ? BRANDS.find(b => b.id === code) : null;
+    const lab = document.createElement("label");
+    lab.className = brand ? "tile" : "opt" + (multi ? " cb" : "");
+    lab.innerHTML = `<input type="${multi ? "checkbox" : "radio"}" name="${q.v}">` + (brand
+      ? `${logoHTML(brand)}${SHOW_NAMES_UNDER_LOGOS ? `<span class="tname">${esc(brand.name)}<br>${brand.zh}</span>` : ""}<span class="tick"></span>`
+      : `<span class="mk"></span><span>${tr(label)}</span>`);
+    const inp = lab.querySelector("input");
+    inp._code = code;
+    inp.addEventListener("change", () => pick(q, c, code, inp));
+    (brand ? tiles : list).appendChild(lab);
+    if (other) {
+      const t = document.createElement("input");
+      t.type = "text"; t.className = "other"; t.placeholder = tr("Type the shop name"); t.hidden = true;
+      t.setAttribute("aria-label", tr("Other shop name"));
+      t.value = A[q.v + "_other"] || "";
+      t.addEventListener("input", () => { A[q.v + "_other"] = t.value; c.classList.remove("err"); refresh(); });
+      list.appendChild(t);
+    }
+  });
+  return frag;
+}
+
+function pick(q, c, code, inp) {
+  if (q.t === "single") A[q.v] = code;
+  else {
+    let arr = (A[q.v] || []).slice();
+    if (inp.checked) {
+      if (q.excl !== undefined && code === q.excl) arr = [code];
+      else {
+        arr = arr.filter(x => x !== q.excl);
+        if (q.max && arr.length >= q.max) { inp.checked = false; note(c, fmt("You can choose up to {n}. Untick one first.", { n: q.max })); return; }
+        arr.push(code);
+      }
+    } else arr = arr.filter(x => x !== code);
+    A[q.v] = arr;
+  }
+  c.classList.remove("err");
+  refresh();
+}
+
+function renderGrid(q, c) {
+  const L = q.scale.labels.map(tr), g = document.createElement("div");
+  g.innerHTML = `<div class="legend"><span>1 = ${L[0]}</span><span>5 = ${L[4]}</span></div>`;
+  q.rows.forEach(([k, label]) => {
+    const r = document.createElement("div");
+    r.className = "grow"; r.dataset.k = k;
+    r.innerHTML = `<div class="glabel" id="${q.v}_${k}_l">${tr(label)}</div><div class="gbtns" role="radiogroup" aria-labelledby="${q.v}_${k}_l"></div>`;
+    const btns = r.querySelector(".gbtns");
+    [1, 2, 3, 4, 5].forEach(code => {
+      const lab = document.createElement("label");
+      lab.className = "gb"; lab.title = `${code} = ${L[code - 1]}`;
+      lab.innerHTML = `<input type="radio" name="${q.v}_${k}" aria-label="${code} ${L[code - 1]}"><span>${code}</span>`;
+      const inp = lab.querySelector("input");
+      inp._code = code; inp._row = k;
+      inp.addEventListener("change", () => {
+        A[q.v] = Object.assign({}, A[q.v], { [k]: code });
+        r.classList.remove("miss");
+        if (q.rows.every(([kk]) => A[q.v][kk] !== undefined)) c.classList.remove("err");
+        refresh();
+      });
+      btns.appendChild(lab);
+    });
+    g.appendChild(r);
+  });
+  return g;
+}
+
+function note(c, msg) {
+  c.querySelector(".q-err").textContent = msg;
+  c.classList.add("warn");
+  clearTimeout(c._t);
+  c._t = setTimeout(() => c.classList.remove("warn"), 3000);
+}
+
+/* show/hide questions, sync inputs, end-of-survey logic */
+function refresh() {
+  let stop = false;
+  app.querySelectorAll(".q").forEach(c => {
+    const q = c._q, vis = !stop && shown(q);
+    if (!vis) { delete A[q.v]; delete A[q.v + "_other"]; }
+    c.hidden = !vis;
+    c.querySelector(".q-text").innerHTML = tr(val(q.text));
+    c.querySelectorAll("input").forEach(inp => {
+      if (inp._code === undefined) return;
+      if (inp._row !== undefined) inp.checked = (A[q.v] || {})[inp._row] === inp._code;
+      else if (q.t === "single") inp.checked = A[q.v] === inp._code;
+      else inp.checked = (A[q.v] || []).includes(inp._code);
+      inp.parentNode.classList.toggle("on", inp.checked);
+    });
+    const ot = c.querySelector(".other");
+    if (ot) {
+      const oc = otherCode(q), sel = q.t === "single" ? A[q.v] === oc : (A[q.v] || []).includes(oc);
+      ot.hidden = !sel;
+      if (!sel && ot.value) { ot.value = ""; delete A[q.v + "_other"]; }
+    }
+    if (vis && q.end && q.end.includes(A[q.v])) stop = true;   // screen-out: hide the rest
+  });
+  const nb = app.querySelector("#next");
+  if (nb) nb.textContent = stop || !SECTIONS.slice(SECTIONS.indexOf(cur) + 1).some(shown) ? tr("Finish") : tr("Next");
+}
+
+function validate() {
+  let first = null;
+  app.querySelectorAll(".q").forEach(c => {
+    const q = c._q;
+    if (c.hidden || q.optional) return;
+    const v = A[q.v];
+    let ok = true, msg = tr("Please answer this question.");
+    if (q.t === "single") ok = v !== undefined;
+    else if (q.t === "multi") ok = Array.isArray(v) && v.length > 0;
+    else if (q.t === "grid") {
+      const miss = q.rows.filter(([k]) => !v || v[k] === undefined).map(([k]) => k);
+      c.querySelectorAll(".grow").forEach(r => r.classList.toggle("miss", miss.includes(r.dataset.k)));
+      ok = !miss.length; msg = tr("Please answer every statement.");
+    }
+    const oc = otherCode(q);
+    if (ok && oc !== undefined && (v === oc || (Array.isArray(v) && v.includes(oc))) && !(A[q.v + "_other"] || "").trim()) { ok = false; msg = tr("Please type the shop name."); }
+    c.classList.toggle("err", !ok);
+    if (!ok) { c.querySelector(".q-err").textContent = msg; if (!first) first = c; }
+  });
+  if (first) { first.scrollIntoView({ behavior: motionOK() ? "smooth" : "auto", block: "center" }); return false; }
+  return true;
+}
+
+function goNext() {
+  if (!validate()) return;
+  if (cur.qs.some(q => shown(q) && q.end && q.end.includes(A[q.v]))) return finish("screened_out");
+  const nx = SECTIONS.slice(SECTIONS.indexOf(cur) + 1).find(shown);
+  nx ? renderSection(nx) : finish("complete");
+}
+
+function goBack() {
+  const pv = SECTIONS.slice(0, SECTIONS.indexOf(cur)).reverse().find(shown);
+  if (pv) return renderSection(pv);
+  draftEmail = meta.email;   // going back keeps the typed email
+  renderSetup();
+}
+
+/* keep only answers to questions the respondent actually saw */
+function prune() {
+  const keep = {};
+  outer: for (const s of SECTIONS) {
+    if (!shown(s)) continue;
+    for (const q of s.qs) {
+      if (!shown(q)) continue;
+      if (A[q.v] !== undefined) keep[q.v] = A[q.v];
+      if (A[q.v + "_other"]) keep[q.v + "_other"] = A[q.v + "_other"];
+      if (q.end && q.end.includes(A[q.v])) break outer;
+    }
+    if (s === cur) break;
+  }
+  A = keep;
+}
+
+function finish(status) {
+  prune();
+  const end = new Date();
+  const rec = { id: meta.id, status, start: meta.start, end: end.toISOString(),
+    dur: Math.round((end - new Date(meta.start)) / 1000),
+    lang: meta.lang, email: meta.email, answers: A, sent: false };
+  const all = load(); all.push(rec); save(all);   // local copy first, so nothing is lost if sending fails
+  cur = null;
+  renderEnd(status);
+  deliver(rec);
+}
+
+function renderEnd(status) {
+  const ok = status === "complete";
+  app.innerHTML = `
+  <div class="wrap end">
+    ${cupSVG(lastLevel)}
+    <h1>${ok ? tr("Thank you!") : "Thanks for stopping by"}</h1>
+    <p class="lead" id="end-msg">${ok ? tr(STUDY.sheetUrl ? "Saving your answers…" : "Your answers are saved. 謝謝您的參與！")
+      : "This survey is only for university students in Taiwan, so we don't need more answers from you. Have a great day!"}</p>
+    <button class="btn primary big" id="retry" type="button" hidden>${tr("Try again")}</button>
+    <button class="btn primary big" id="again" type="button">${tr("Start a new response")}</button>
+  </div>`;
+  app.querySelector("#again").onclick = renderWelcome;
+  window.scrollTo(0, 0);
+  fillCup(ok ? 1 : lastLevel);
+}
+
+/* --- sending to Google Sheets --- */
+async function postSheet(body) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+  try {
+    // text/plain keeps this a "simple" request, which Apps Script accepts without a CORS preflight
+    const res = await fetch(STUDY.sheetUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                                              body: JSON.stringify(body), signal: ctl.signal });
+    return await res.json();
+  } finally { clearTimeout(timer); }
+}
+
+// "sent" | "duplicate" | "failed" | "local"
+async function sendRecord(rec) {
+  if (!STUDY.sheetUrl) return "local";
+  try {
+    const res = await postSheet({ action: "submit", columns: columns(), row: toRow(rec) });
+    if (!res.ok && res.reason !== "duplicate") return "failed";
+    const all = load(), r = all.find(x => x.id === rec.id);
+    if (r) { r.sent = true; save(all); }
+    return res.ok ? "sent" : "duplicate";
+  } catch (e) { return "failed"; }
+}
+
+async function deliver(rec) {
+  sending = true;
+  const result = await sendRecord(rec);
+  sending = false;
+  const msg = document.getElementById("end-msg"), retry = document.getElementById("retry");
+  if (!msg) return;   // already on another page
+  const text = { sent: "Your answers are saved. 謝謝您的參與！", local: "Your answers are saved. 謝謝您的參與！",
+                 duplicate: "This email has already been used to answer the survey.",
+                 failed: "We couldn't send your answers. Please check your internet connection and try again." }[result];
+  msg.textContent = tr(text);
+  retry.hidden = result !== "failed";
+  retry.onclick = () => { retry.hidden = true; msg.textContent = tr("Saving your answers…"); deliver(rec); };
+}
+
+// answers that could not be sent earlier on this device go out on the next visit
+async function flushUnsent() {
+  for (const r of load().filter(x => x.sent === false)) await sendRecord(r);
+}
+
+/* ===================== 5. CSV EXPORT ===================== */
+function columns() {
+  const cols = ["resp_id", "status", "start_time", "end_time", "duration_sec", "lang", "email"];
+  SECTIONS.forEach(s => s.qs.forEach(q => {
+    if (q.t === "multi") q.opts.forEach(([c]) => cols.push(`${q.v}_${c}`));
+    else if (q.t === "grid") { q.rows.forEach(([k]) => cols.push(`${q.v}_${k}`)); if (q.construct) cols.push(`${q.v}_mean`); }
+    else cols.push(q.v);
+    if (otherCode(q) !== undefined) cols.push(q.v + "_other");
+  }));
+  cols.push("buys_mkt_minimal", "buys_mkt_mixed", "buys_mkt_heavy", "attn_pass");
+  return cols;
+}
+
+function toRow(r) {
+  const a = r.answers;
+  const o = { resp_id: r.id, status: r.status, start_time: r.start, end_time: r.end, duration_sec: r.dur,
+              lang: r.lang || "en", email: r.email || "" };
+  SECTIONS.forEach(s => s.qs.forEach(q => {
+    const v = a[q.v];
+    if (q.t === "multi") q.opts.forEach(([c]) => { o[`${q.v}_${c}`] = Array.isArray(v) ? (v.includes(c) ? 1 : 0) : ""; });
+    else if (q.t === "grid") {
+      q.rows.forEach(([k]) => { o[`${q.v}_${k}`] = v && v[k] !== undefined ? v[k] : ""; });
+      if (q.construct) {
+        const items = q.rows.filter(([k]) => k !== "attn").map(([k]) => v && v[k]);
+        o[`${q.v}_mean`] = items.every(x => typeof x === "number") ? (items.reduce((s2, x) => s2 + x, 0) / items.length).toFixed(2) : "";
+      }
+    }
+    else o[q.v] = v === undefined ? "" : v;
+    if (otherCode(q) !== undefined) o[q.v + "_other"] = a[q.v + "_other"] || "";
+  }));
+  ["minimal", "mixed", "heavy"].forEach(g => {
+    o[`buys_mkt_${g}`] = Array.isArray(a.Q9_shops) ? (a.Q9_shops.some(c => MKT_GROUP[c] === g) ? 1 : 0) : "";
+  });
+  const at = a.X3 && a.X3.attn;
+  o.attn_pass = at === undefined ? "" : (at === 2 ? 1 : 0);
+  return o;
+}
+
+const cell = v => { v = String(v ?? ""); return /[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
+
+function exportCSV() {
+  const all = load();
+  if (!all.length) { alert("There are no saved responses on this device yet."); return; }
+  const cols = columns();
+  const lines = [cols.join(",")].concat(all.map(r => { const o = toRow(r); return cols.map(k => cell(o[k])).join(","); }));
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `group5_bubbletea_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link); link.click();
+  setTimeout(() => { URL.revokeObjectURL(link.href); link.remove(); }, 500);
+}
+
+/* ===================== 6. START ===================== */
+const route = () => location.hash === "#staff" ? renderStaff() : renderWelcome();
+window.addEventListener("hashchange", route);
+window.addEventListener("beforeunload", e => { if (cur || sending) { e.preventDefault(); e.returnValue = ""; } });
+route();
+if (STUDY.sheetUrl) flushUnsent();
+</script>
+</body>
+</html>
