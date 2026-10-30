@@ -23,7 +23,13 @@ A copy also stays in the respondent's browser and is re-sent on their next visit
 5. In `survey.html`, paste it into `STUDY.sheetUrl`, commit and push.
 
 Responses appear in the `Responses` tab; the header row is created by the first response.
+`received_at` is the server time of each row (the other times come from the respondent's device).
 The sheet rejects a second response with the same email.
+
+The web app URL is public (it is in the page source). The script only appends validated rows and
+answers "has this email already answered?" with yes/no; it never returns stored answers. That
+yes/no check is what lets the survey stop a repeat respondent before they spend five minutes on it.
+To start over, delete the rows below the header (or the whole `Responses` tab).
 
 After changing `Code.gs`: **Deploy → Manage deployments → Edit → Version: New version → Deploy**.
 The URL stays the same.

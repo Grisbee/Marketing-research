@@ -245,7 +245,6 @@ const ZH = {
   "Please type the shop name.": "請輸入店名。",
   "Thank you!": "謝謝！",
   "Your answers are saved. 謝謝您的參與！": "你的回答已儲存，謝謝你的參與！",
-  "Start a new response": "開始新的填答",
   "Checking…": "檢查中…",
   "This email has already been used to answer the survey.": "這個電子郵件已經填寫過問卷了。",
   "Saving your answers…": "正在儲存你的回答…",
@@ -588,6 +587,7 @@ async function start() {
     if (used) return fail("This email has already been used to answer the survey.");
   }
   draftEmail = "";
+  if (meta && !meta.done && meta.email === email) { meta.lang = lang; return renderSection(SECTIONS[0]); }
   A = {}; lastLevel = 0;
   meta = { id: Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(),
            start: new Date().toISOString(), lang, email };
@@ -757,11 +757,10 @@ function note(c, msg) {
   c._t = setTimeout(() => c.classList.remove("warn"), 3000);
 }
 
-/* show/hide questions, sync inputs, end-of-survey logic */
+/* show/hide questions, sync inputs */
 function refresh() {
-  let stop = false;
   app.querySelectorAll(".q").forEach(c => {
-    const q = c._q, vis = !stop && shown(q);
+    const q = c._q, vis = shown(q);
     if (!vis) { delete A[q.v]; delete A[q.v + "_other"]; }
     c.hidden = !vis;
     c.querySelector(".q-text").innerHTML = tr(val(q.text));
@@ -778,10 +777,9 @@ function refresh() {
       ot.hidden = !sel;
       if (!sel && ot.value) { ot.value = ""; delete A[q.v + "_other"]; }
     }
-    if (vis && q.end && q.end.includes(A[q.v])) stop = true;   // screen-out: hide the rest
   });
   const nb = app.querySelector("#next");
-  if (nb) nb.textContent = stop || !SECTIONS.slice(SECTIONS.indexOf(cur) + 1).some(shown) ? tr("Finish") : tr("Next");
+  if (nb) nb.textContent = !SECTIONS.slice(SECTIONS.indexOf(cur) + 1).some(shown) ? tr("Finish") : tr("Next");
 }
 
 function validate() {
@@ -809,9 +807,8 @@ function validate() {
 
 function goNext() {
   if (!validate()) return;
-  if (cur.qs.some(q => shown(q) && q.end && q.end.includes(A[q.v]))) return finish("screened_out");
   const nx = SECTIONS.slice(SECTIONS.indexOf(cur) + 1).find(shown);
-  nx ? renderSection(nx) : finish("complete");
+  nx ? renderSection(nx) : finish();
 }
 
 function goBack() {
@@ -824,45 +821,41 @@ function goBack() {
 /* keep only answers to questions the respondent actually saw */
 function prune() {
   const keep = {};
-  outer: for (const s of SECTIONS) {
+  for (const s of SECTIONS) {
     if (!shown(s)) continue;
     for (const q of s.qs) {
       if (!shown(q)) continue;
       if (A[q.v] !== undefined) keep[q.v] = A[q.v];
       if (A[q.v + "_other"]) keep[q.v + "_other"] = A[q.v + "_other"];
-      if (q.end && q.end.includes(A[q.v])) break outer;
     }
     if (s === cur) break;
   }
   A = keep;
 }
 
-function finish(status) {
+function finish() {
   prune();
   const end = new Date();
-  const rec = { id: meta.id, status, start: meta.start, end: end.toISOString(),
+  const rec = { id: meta.id, status: "complete", start: meta.start, end: end.toISOString(),
     dur: Math.round((end - new Date(meta.start)) / 1000),
     lang: meta.lang, email: meta.email, answers: A, sent: false };
   const all = load(); all.push(rec); save(all);   // local copy first, so nothing is lost if sending fails
+  meta.done = true;
   cur = null;
-  renderEnd(status);
+  renderEnd();
   deliver(rec);
 }
 
-function renderEnd(status) {
-  const ok = status === "complete";
+function renderEnd() {
   app.innerHTML = `
   <div class="wrap end">
     ${cupSVG(lastLevel)}
-    <h1>${ok ? tr("Thank you!") : "Thanks for stopping by"}</h1>
-    <p class="lead" id="end-msg">${ok ? tr(STUDY.sheetUrl ? "Saving your answers…" : "Your answers are saved. 謝謝您的參與！")
-      : "This survey is only for university students in Taiwan, so we don't need more answers from you. Have a great day!"}</p>
+    <h1>${tr("Thank you!")}</h1>
+    <p class="lead" id="end-msg">${tr(STUDY.sheetUrl ? "Saving your answers…" : "Your answers are saved. 謝謝您的參與！")}</p>
     <button class="btn primary big" id="retry" type="button" hidden>${tr("Try again")}</button>
-    <button class="btn primary big" id="again" type="button">${tr("Start a new response")}</button>
   </div>`;
-  app.querySelector("#again").onclick = renderWelcome;
   window.scrollTo(0, 0);
-  fillCup(ok ? 1 : lastLevel);
+  fillCup(1);
 }
 
 /* --- sending to Google Sheets --- */
@@ -882,15 +875,21 @@ async function sendRecord(rec) {
   try {
     const res = await postSheet({ action: "submit", columns: columns(), row: toRow(rec) });
     if (!res.ok && res.reason !== "duplicate") return "failed";
+    // the sheet now holds it; keep answers as a backup, but not the email, on a possibly shared device
     const all = load(), r = all.find(x => x.id === rec.id);
-    if (r) { r.sent = true; save(all); }
+    if (r) { r.sent = true; delete r.email; save(all); }
     return res.ok ? "sent" : "duplicate";
   } catch (e) { return "failed"; }
 }
 
 async function deliver(rec) {
   sending = true;
-  const result = await sendRecord(rec);
+  let result = await sendRecord(rec);
+  for (const pause of [2000, 5000]) {   // a busy moment usually clears within seconds
+    if (result !== "failed") break;
+    await new Promise(r => setTimeout(r, pause));
+    result = await sendRecord(rec);
+  }
   sending = false;
   const msg = document.getElementById("end-msg"), retry = document.getElementById("retry");
   if (!msg) return;   // already on another page
@@ -931,7 +930,8 @@ function toRow(r) {
       q.rows.forEach(([k]) => { o[`${q.v}_${k}`] = v && v[k] !== undefined ? v[k] : ""; });
       if (q.construct) {
         const items = q.rows.filter(([k]) => k !== "attn").map(([k]) => v && v[k]);
-        o[`${q.v}_mean`] = items.every(x => typeof x === "number") ? (items.reduce((s2, x) => s2 + x, 0) / items.length).toFixed(2) : "";
+        // a number, not a "3.67" string, so a comma-decimal spreadsheet does not read it as text or a date
+        o[`${q.v}_mean`] = items.every(x => typeof x === "number") ? Math.round(items.reduce((s2, x) => s2 + x, 0) / items.length * 100) / 100 : "";
       }
     }
     else o[q.v] = v === undefined ? "" : v;
@@ -945,7 +945,11 @@ function toRow(r) {
   return o;
 }
 
-const cell = v => { v = String(v ?? ""); return /[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
+const cell = v => {
+  v = String(v ?? "");
+  if (/^[=+\-@]/.test(v)) v = "'" + v;   // typed text must not open as a formula in Excel
+  return /[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+};
 
 function exportCSV() {
   const all = load();
