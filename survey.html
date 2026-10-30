@@ -219,7 +219,7 @@ const ZH = {
   // welcome, navigation, messages
   "Bubble tea survey": "手搖飲問卷",
   "What makes you buy bubble tea?": "是什麼讓你買手搖飲？",
-  "A {m}-minute survey for our class project.": "{m} 分鐘的課堂專題問卷。",
+  "A less-than-{m}-minute survey for our class project.": "不到 {m} 分鐘的課堂專題問卷。",
   "Your email": "你的電子郵件",
   "We ask for your email only to make sure each person answers once. We will never contact you or share it.": "我們只用電子郵件確認每人只填寫一次，不會用它聯絡你，也不會分享給任何人。",
   "Please enter a valid email address.": "請輸入有效的電子郵件地址。",
@@ -495,7 +495,7 @@ function renderWelcome() {
       <div>
         <h1>What makes you buy bubble tea?</h1>
         <p class="zh-sub">${zhOf("What makes you buy bubble tea?")}</p>
-        <p class="lead">${both("A {m}-minute survey for our class project.", { m: STUDY.minutes })}</p>
+        <p class="lead">${both("A less-than-{m}-minute survey for our class project.", { m: STUDY.minutes })}</p>
       </div>
       <div class="hero-cup">${HERO_CUP}</div>
     </div>
