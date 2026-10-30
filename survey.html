@@ -44,9 +44,6 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.015em}
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:center;padding:36px 0 40px}
 .hero h1{font-size:clamp(42px,7.5vw,68px);line-height:.98;letter-spacing:-.035em;font-variation-settings:"opsz" 96}
 .lead{font-size:19px;line-height:1.5;max-width:32em;margin:20px 0}
-.facts{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:6px}
-.facts li{position:relative;padding-left:24px}
-.facts li::before{content:"";position:absolute;left:2px;top:.45em;width:11px;height:11px;border-radius:50%;background:var(--pearl)}
 .cup-hero{display:block;width:100%;max-width:250px;margin:0 auto}
 @media(max-width:640px){.hero{grid-template-columns:1fr;gap:12px;padding-top:20px}.hero-cup{order:-1}.cup-hero{max-width:130px;margin:0}}
 .staff{padding:32px 20px 48px}
@@ -222,17 +219,13 @@ const ZH = {
   // welcome, navigation, messages
   "Bubble tea survey": "手搖飲問卷",
   "What makes you buy bubble tea?": "是什麼讓你買手搖飲？",
-  "We're students in a {c} course. We want to learn which discounts, memberships, collaborations and social media posts make people buy bubble tea, and whether Taiwanese and international customers react differently.":
-    "我們是{c}課程的學生。我們想了解哪些折扣、會員制度、聯名活動和社群貼文會讓人購買手搖飲，以及台灣人和外國人的反應是否不同。",
-  "Takes about {m} minutes": "大約需要 {m} 分鐘",
-  "For students and non-students living in Taiwan": "適合住在台灣的學生和非學生",
-  "Your answers are used only for our class project": "你的回答只會用於我們的課堂專題",
+  "A {m}-minute survey for our class project.": "{m} 分鐘的課堂專題問卷。",
   "Your email": "你的電子郵件",
   "We ask for your email only to make sure each person answers once. We will never contact you or share it.": "我們只用電子郵件確認每人只填寫一次，不會用它聯絡你，也不會分享給任何人。",
   "Please enter a valid email address.": "請輸入有效的電子郵件地址。",
   "Start the survey": "開始填寫",
   "Before we start": "開始之前",
-  "By starting, you agree to take part. You can stop at any time.": "開始填寫即表示你同意參與，你可以隨時停止。",
+  "By starting, you agree to take part.": "開始填寫即表示你同意參與。",
   "Part {p} of {n}": "第 {p} 部分，共 {n} 部分",
   ", brand {i} of {k}": "，品牌 {i}／{k}",
   "Back": "上一頁", "Next": "下一頁", "Finish": "完成",
@@ -491,31 +484,24 @@ function load() { try { return JSON.parse(localStorage.getItem(STUDY.storageKey)
 function save(all) { try { localStorage.setItem(STUDY.storageKey, JSON.stringify(all)); } catch (e) { MEM = all; } }
 
 /* --- page 1: welcome, in both languages --- */
-const LEAD = "We're students in a {c} course. We want to learn which discounts, memberships, collaborations and social media posts make people buy bubble tea, and whether Taiwanese and international customers react differently.";
 const both = (key, vars) => `${fill(key, vars)}<span class="zh-line">${zhOf(key, vars)}</span>`;
 
 function renderWelcome() {
   cur = null;
   setLang("en");
-  const c = { c: esc(STUDY.course) }, m = { m: STUDY.minutes };
   app.innerHTML = `
   <div class="wrap">
     <div class="hero">
       <div>
         <h1>What makes you buy bubble tea?</h1>
         <p class="zh-sub">${zhOf("What makes you buy bubble tea?")}</p>
-        <p class="lead">${both(LEAD, c)}</p>
-        <ul class="facts">
-          <li>${both("Takes about {m} minutes", m)}</li>
-          <li>${both("For students and non-students living in Taiwan")}</li>
-          <li>${both("Your answers are used only for our class project")}</li>
-        </ul>
+        <p class="lead">${both("A {m}-minute survey for our class project.", { m: STUDY.minutes })}</p>
       </div>
       <div class="hero-cup">${HERO_CUP}</div>
     </div>
     <div class="start-row">
       <button class="btn primary huge" id="start" type="button">Start · ${zhOf("Start the survey")}</button>
-      <p class="small">${both("By starting, you agree to take part. You can stop at any time.")}</p>
+      <p class="small">${both("By starting, you agree to take part.")}</p>
     </div>
   </div>`;
   document.getElementById("start").onclick = renderSetup;
